@@ -2,46 +2,77 @@ import java.lang.Math.*;
 import java.time.Year;
 import java.util.Scanner;
 import java.util.Arrays;
+import java.util.Random;
 
 class Play {
 
-    // Gestion de l'as et du 11
-    public static int aceChecker(int card, int scoreBefore) {
-        if ((card == 1) && (scoreBefore < 11)) {
-            System.out.println("A 1 has been selected. Which value do you want to choose: 1 or 11?");
-            int newAceValue = input.nextInt();
-            return newAceValue;
-         } else
-             return card;
+    // Card drawing method
+    public static int drawCard (int score) {
+        String cards[] = {"Ace","2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+        int earnedPoints = 0;
+        Random r = new Random();
+        int randomIndex = r.nextInt(13);
+        String drawnCard = cards[randomIndex];
+        if (drawnCard == "Ace" && score < 11) { //Possible optimization: bypass this when the dealer plays.
+            System.out.println("An Ace has been drawn. Which value do you want to asign: 1 or 11?");
+            int aceAnswer = input.nextInt();
+            if (aceAnswer == 1) {
+                earnedPoints = 1;
+                System.out.println("1 point is earned.");
+            } else if (aceAnswer == 11) {
+                earnedPoints = 11;
+                System.out.println("11 points are earned.");
+            } else { 
+                System.out.println("Your answer isn't valid! 11 points are earned.");
+                earnedPoints = 11;
+            }
+        } else if (drawnCard == "10" || drawnCard == "Jack" || drawnCard == "Queen" || drawnCard == "King") {
+                earnedPoints = 10;
+                System.out.println("A " + drawnCard + " has been drawn. 10 points are earned.");
+        } else {
+            earnedPoints = Integer.parseInt(drawnCard);
+            System.out.println("A " + drawnCard + " has been drawn. " + drawnCard + " points are earned.");
+        }
+        return earnedPoints;
     }
+
+
+    // Gestion de l'as et du 11
+    // public static int aceChecker(int card, int scoreBefore) {
+    //     if (card == 1 && scoreBefore < 11) {
+    //         System.out.println("A 1 has been selected. Which value do you want to choose: 1 or 11?");
+    //         int newAceValue = input.nextInt();
+    //         return newAceValue;
+    //      } else
+    //          return card;
+    // }
 
     public static Scanner input = new Scanner(System.in);
 
-    public static int takeCard(int scoreBefore) {
-
-        double nbRandom = Math.random() * 10;
-        int nbRandomInt = (int) (nbRandom + 1);
-        int checkCard = aceChecker(nbRandomInt, scoreBefore);
-        return checkCard;
-    }
+    // public static int takeCard(int scoreBefore) {
+    //     double nbRandom = Math.random() * 10;   // ajouter le traitement des têtes
+    //     int nbRandomInt = (int) (nbRandom + 1);
+    //     int checkCard = aceChecker(nbRandomInt, scoreBefore);
+    //     return checkCard;
+    // }
 
     // The player takes tow cards and he reads the result
     public static int playerCardsDistribution() {
-        int playerCard1 = takeCard(0);
-        int playerCard2 = takeCard(0);
+        System.out.println("Player's turn. Two cards are drawn.");
+        int playerCard1 = drawCard(0);
+        int playerCard2 = drawCard(0);
         int playerScore = playerCard1 + playerCard2;
-        System.out.println("The first card is " + playerCard1);
-        System.out.println("The second card is " + playerCard2);
-        System.out.println("The score is " + playerScore);
+        System.out.println("The Player's score is " + playerScore + ".");
         return playerScore;
     }
 
     // he dealer gives one card face up and one card face down to himself.
     public static int[] dealerCardsDistribution() {
-        int dealerCardFaceUp = takeCard(0);
-        int dealerCardFaceDown = takeCard(0);
+        System.out.println("Dealer's turn. Two cards are drawn: one face-up and one face-down.");
+        int dealerCardFaceUp = drawCard(0);
+        int dealerCardFaceDown = drawCard(0);
         int dealerScore = dealerCardFaceUp + dealerCardFaceDown;
-        System.out.println("The dealer has a  " + dealerCardFaceUp);
+        System.out.println("The Dealer's score is  " + dealerCardFaceUp + ".");
         int[] tab = new int[3];
         tab[0] = dealerCardFaceUp;
         tab[1] = dealerCardFaceDown;
@@ -59,7 +90,7 @@ class Play {
 
     public static int takeNewCard(int score) {
         int playerScore = score;
-        int newCard = takeCard(playerScore);
+        int newCard = drawCard(playerScore);
         playerScore += newCard;
         System.out.println("The new card is " + newCard);
         System.out.println("The new score is " + playerScore);
@@ -95,12 +126,12 @@ class Play {
     }
 
     public static void main(String[] args) {        
-        int currentScore = 0;
-        int scoreDealer = 0;
+        int playerScore = 0;
+        int dealerScore = 0;
         char answer;
 
-        //The dealer gives twos cards face up to the player.
-        currentScore = playerCardsDistribution();
+        // Player's turn. Two cards are given to the Player.
+        playerScore = playerCardsDistribution();
         System.out.println();
 
         //The dealer gives one card face up and one card face down to himself.
@@ -112,34 +143,33 @@ class Play {
         System.out.println();
 
         //Until the player score is 21 or under, he can decide to ask for additional cards, one at a time.
-        int lastScorePlayer = newCardProcess(currentScore , answer);
+        int lastScorePlayer = newCardProcess(playerScore , answer);
         System.out.println("Your final score is " + lastScorePlayer);
         System.out.println();
 
         if( lastScorePlayer <= 21) {
             //The dealer will turn up his face-down card
-            scoreDealer = tableScoreDealer[2];
+            dealerScore = tableScoreDealer[2];
             System.out.println("The dealer's card face up is " + tableScoreDealer[0]);
             System.out.println("The dealer's card face down is " + tableScoreDealer[1]);
-            System.out.println("His score is " + scoreDealer);
-            System.out.println();
+            System.out.println("His score is " + dealerScore + "\n");
         
             //The dealer plays
-            while (scoreDealer < 17 ) {
-                scoreDealer = takeNewCard(scoreDealer);
-                if ( scoreDealer > 21) {
+            while (dealerScore < 17 ) {
+                dealerScore = takeNewCard(dealerScore);
+                if ( dealerScore > 21) {
                     System.out.println("The dealer looses");
-                } else if ( scoreDealer == 21 ) {
+                } else if ( dealerScore == 21 ) {
                     System.out.println("The dealer has 21");
                 } else {
-                    System.out.println("The new dealer's score is " + scoreDealer);
+                    System.out.println("The new dealer's score is " + dealerScore);
                 }
             }
         }
         System.out.println();
 
         //And the winner is
-        winnerSelection(lastScorePlayer, scoreDealer);
+        winnerSelection(lastScorePlayer, dealerScore);
         System.out.println();        
     }
 }
