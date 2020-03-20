@@ -21,7 +21,7 @@ class Play {
         return drawnCard;  
     }
 
-    // Point asignment method
+    // Point assignment method
     public static int assignPoints (int score, String card) {
         int earnedPoints = 0;
         if (card == "Ace" && score < 11) {
