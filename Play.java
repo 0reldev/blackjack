@@ -43,6 +43,9 @@ class Play {
         } else if (card == "10" || card == "Jack" || card == "Queen" || card == "King") {
                 earnedPoints = 10;
                 System.out.println("10 points are earned.");
+        } else if (card == "Ace" && score >= 11) {
+                earnedPoints = 1;
+                System.out.println("1 point is earned.");
         } else {
             earnedPoints = Integer.parseInt(card);
             System.out.println(card + " points are earned.");
@@ -73,7 +76,7 @@ class Play {
         String dealerCardFaceUp = drawCard("faceUp");
         dealerScore = assignPoints(dealerScore, dealerCardFaceUp);
         String dealerCardFaceDown = drawCard("faceDown");
-        System.out.println("The Dealer's score is  " + dealerScore + ".");
+        System.out.println("The Dealer's score is " + dealerScore + ".");
         String[] tab = new String[3];
         tab[0] = dealerCardFaceUp;
         tab[1] = dealerCardFaceDown;
@@ -145,10 +148,10 @@ class Play {
         System.out.println();
 
         // Until the player score is 21 or under, he can decide to ask for additional cards, one at a time.
-        int lastScorePlayer = newCardProcess(playerScore , answer);
-        System.out.println("The Player's final score is " + lastScorePlayer +".");
+        int lastPlayerScore = newCardProcess(playerScore , answer);
+        System.out.println("The Player's final score is " + lastPlayerScore +".");
 
-        if( lastScorePlayer <= 21) {
+        if( lastPlayerScore <= 21) {
             // The Dealer's face-down card is revealed.
             dealerScore = Integer.parseInt(tableScoreDealer[2]);
             System.out.println("\nThe Dealer's face-up card was " + tableScoreDealer[0] + ".");
@@ -172,7 +175,7 @@ class Play {
         System.out.println();
 
         // Winner selection.
-        winnerSelection(lastScorePlayer, dealerScore);
+        winnerSelection(lastPlayerScore, dealerScore);
         System.out.println();        
     }
 }
