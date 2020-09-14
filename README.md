@@ -4,7 +4,7 @@
 
 ### Introduction
 
-During my web developper training course at the Wild Code School, I'v been asked to code a simple black-jack game in Java to practice the basics.
+During my web developper training course at the Wild Code School, I've been asked to code a simple black-jack game in Java to practice the basics.
 
 ### Rules
 
